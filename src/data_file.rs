@@ -65,3 +65,33 @@ pub fn save_parquet_file(file_path: &PathBuf, data: &mut DataFrame) -> Result<()
         .unwrap_or_else(|_| panic!("Failed writing dataframe to file {:?}", file_path));
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use std::ffi::OsStr;
+    use std::fs;
+
+    use super::*;
+
+    #[test]
+    fn round_trip() {
+        let csv_path = PathBuf::from(OsStr::new("round_trip_test_data.csv"));
+        let parquet_path = csv_path.with_extension("parquet");
+        assert!(csv_path.is_file());
+        fs::remove_file(&parquet_path).unwrap_or_default();
+
+        let result = load_csv_file(&csv_path);
+        assert!(result.is_ok());
+        let mut dataframe = result.unwrap();
+
+        let result = save_parquet_file(&parquet_path, &mut dataframe);
+        assert!(result.is_ok());
+        assert!(parquet_path.is_file());
+
+        let result = load_parquet_file(&parquet_path);
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), dataframe);
+
+        assert!(fs::remove_file(&parquet_path).is_ok());
+    }
+}
