@@ -61,11 +61,15 @@ mod tests {
         let result = csv_schema(&non_existent_path);
         assert!(result.is_err());
 
-        let error_txt = result.err().unwrap().to_string();
+        let error = result.err().unwrap();
         assert_eq!(
-            error_txt,
+            error.to_string(),
             "could not scan CSV file \"this_path_does_not_exist\""
         );
+        assert_eq!(
+            error.source().unwrap().to_string(),
+            "The system cannot find the file specified. (os error 2)"
+        )
     }
 
     #[test]
@@ -74,16 +78,20 @@ mod tests {
         let result = csv_to_parquet(&non_existent_path, false);
         assert!(result.is_err());
 
-        let error_txt = result.err().unwrap().to_string();
+        let error = result.err().unwrap();
         assert_eq!(
-            error_txt,
+            error.to_string(),
             "could not open CSV file \"this_path_does_not_exist\""
         );
+        assert_eq!(
+            error.source().unwrap().to_string(),
+            "The system cannot find the file specified. (os error 2)"
+        )
     }
 
     #[test]
     fn csv_schema_works_on_valid_file() {
-        let csv_path = PathBuf::from(OsStr::new("test_data.csv"));
+        let csv_path = PathBuf::from(OsStr::new("test_data/test_data.csv"));
         let result = csv_schema(&csv_path);
         assert!(result.is_ok());
 
@@ -101,7 +109,7 @@ mod tests {
 
     #[test]
     fn convert_works_on_valid_file() {
-        let csv_path = PathBuf::from(OsStr::new("test_data.csv"));
+        let csv_path = PathBuf::from(OsStr::new("test_data/test_data.csv"));
         let result = csv_to_parquet(&csv_path, false);
         assert!(result.is_ok());
 

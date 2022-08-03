@@ -74,8 +74,25 @@ mod tests {
     use super::*;
 
     #[test]
+    fn fail_on_non_utf8_text() {
+        let csv_path = PathBuf::from(OsStr::new("test_data/test_data_windows-1252.csv"));
+        let result = load_csv_file(&csv_path);
+        assert!(result.is_err());
+
+        let error = result.err().unwrap();
+        assert_eq!(
+            error.to_string(),
+            "could not load CSV file \"test_data/test_data_windows-1252.csv\""
+        );
+        assert_eq!(
+            error.source().unwrap().to_string(),
+            "invalid utf8 data in csv"
+        )
+    }
+
+    #[test]
     fn round_trip() {
-        let csv_path = PathBuf::from(OsStr::new("round_trip_test_data.csv"));
+        let csv_path = PathBuf::from(OsStr::new("test_data/round_trip_test_data.csv"));
         let parquet_path = csv_path.with_extension("parquet");
         assert!(csv_path.is_file());
         fs::remove_file(&parquet_path).unwrap_or_default();
