@@ -8,4 +8,5 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.*"
 clap = { version = "3.2.*", features = ["derive"] }
+encoding = "0.2.*"
 polars = { version = "0.22.*", features = ["lazy", "fmt", "parquet"] }

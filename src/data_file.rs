@@ -1,11 +1,33 @@
 use std::fs::File;
+use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::PathBuf;
 
 use anyhow::{Context, Result};
+use encoding::all::WINDOWS_1252;
+use encoding::{DecoderTrap, Encoding};
 use polars::prelude::{
     CsvReader, CsvWriter, DataFrame, LazyCsvReader, LazyFrame, ParquetCompression, ParquetReader,
     ParquetWriter, ScanArgsParquet, SerReader, SerWriter,
 };
+
+pub fn win_to_utf8(file_path: &PathBuf, new_file_path: &PathBuf) -> Result<()> {
+    let file =
+        File::open(file_path).with_context(|| format!("could not open file {:?}", file_path))?;
+    let new_file = File::create(new_file_path)
+        .with_context(|| format!("could not create file {:?}", new_file_path))?;
+    let reader = BufReader::new(&file);
+    let mut writer = BufWriter::new(&new_file);
+
+    for line in reader.split(b'\n').map(|line| line.unwrap()) {
+        let mut decoded_string = WINDOWS_1252.decode(&line, DecoderTrap::Strict).unwrap();
+        decoded_string += "\n";
+        writer
+            .write(decoded_string.as_ref())
+            .with_context(|| format!("error writing string {:?}", &decoded_string))?;
+    }
+
+    Ok(())
+}
 
 pub fn load_csv_file(file_path: &PathBuf) -> Result<DataFrame> {
     CsvReader::from_path(file_path)
@@ -110,5 +132,14 @@ mod tests {
         assert_eq!(result.unwrap(), dataframe);
 
         assert!(fs::remove_file(&parquet_path).is_ok());
+    }
+
+    #[test]
+    fn convert_win_1252() {
+        let csv_path = PathBuf::from(OsStr::new("test_data/test_data_windows-1252.csv"));
+        let new_csv_path = csv_path.with_extension("csv_new");
+        let result = win_to_utf8(&csv_path, &new_csv_path);
+        assert!(result.is_ok());
+        assert!(new_csv_path.is_file());
     }
 }
