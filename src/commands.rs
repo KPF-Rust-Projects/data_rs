@@ -46,8 +46,12 @@ pub fn parquet_schema(parquet_path: &PathBuf) -> Result<String> {
     Ok(format!("{:?}", lazy_df.schema()))
 }
 
+pub fn win_to_utf8(win_path: &PathBuf, utf8_path: &PathBuf) -> Result<()> {
+    data_file::win_to_utf8(win_path, utf8_path)
+}
+
 #[cfg(test)]
-mod tests {
+mod command_tests {
     use std::ffi::OsStr;
     use std::fs;
 

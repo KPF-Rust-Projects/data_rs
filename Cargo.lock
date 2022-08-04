@@ -373,7 +373,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "data_rs"
+name = "datatool"
 version = "0.1.0"
 dependencies = [
  "anyhow",

@@ -52,6 +52,16 @@ enum Commands {
         #[clap(value_parser, value_name = "PARQUET_FILE")]
         parquet_path: PathBuf,
     },
+    /// Convert a text file encoded in win-1252 to UTF8
+    WinToUTF8 {
+        /// Path to existing win-1252 text file
+        #[clap(value_parser, value_name = "WIN_FILE")]
+        win_path: PathBuf,
+
+        /// Path to new UTF8 text file
+        #[clap(value_parser, value_name = "UTF8_FILE")]
+        utf8_path: PathBuf,
+    },
 }
 
 fn main() -> Result<()> {
@@ -80,6 +90,12 @@ fn main() -> Result<()> {
         Commands::ParquetSchema { parquet_path } => {
             let output = commands::parquet_schema(parquet_path)?;
             println!("Scanned file {:?}, {}", parquet_path, output);
+        }
+        Commands::WinToUTF8 {
+            win_path,
+            utf8_path,
+        } => {
+            commands::win_to_utf8(win_path, utf8_path)?;
         }
     }
 
