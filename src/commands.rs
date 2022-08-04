@@ -52,7 +52,6 @@ pub fn win_to_utf8(win_path: &PathBuf, utf8_path: &PathBuf) -> Result<()> {
 
 #[cfg(test)]
 mod command_tests {
-    use std::ffi::OsStr;
     use std::fs;
 
     use polars::prelude::DataType;
@@ -61,7 +60,7 @@ mod command_tests {
 
     #[test]
     fn csv_schema_fails_on_non_existent_file() {
-        let non_existent_path = PathBuf::from(OsStr::new("this_path_does_not_exist"));
+        let non_existent_path = PathBuf::from("this_path_does_not_exist");
         let result = csv_schema(&non_existent_path);
         assert!(result.is_err());
 
@@ -78,7 +77,7 @@ mod command_tests {
 
     #[test]
     fn convert_fails_on_non_existent_file() {
-        let non_existent_path = PathBuf::from(OsStr::new("this_path_does_not_exist"));
+        let non_existent_path = PathBuf::from("this_path_does_not_exist");
         let result = csv_to_parquet(&non_existent_path, false);
         assert!(result.is_err());
 
@@ -95,7 +94,7 @@ mod command_tests {
 
     #[test]
     fn csv_schema_works_on_valid_file() {
-        let csv_path = PathBuf::from(OsStr::new("test_data/test_data.csv"));
+        let csv_path = PathBuf::from("test_data/test_data.csv");
         let result = csv_schema(&csv_path);
         assert!(result.is_ok());
 
@@ -113,7 +112,7 @@ mod command_tests {
 
     #[test]
     fn convert_works_on_valid_file() {
-        let csv_path = PathBuf::from(OsStr::new("test_data/test_data.csv"));
+        let csv_path = PathBuf::from("test_data/test_data.csv");
         let result = csv_to_parquet(&csv_path, false);
         assert!(result.is_ok());
 

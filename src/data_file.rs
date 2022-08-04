@@ -92,7 +92,6 @@ pub fn save_parquet_file(file_path: &PathBuf, data: &mut DataFrame) -> Result<()
 
 #[cfg(test)]
 mod data_file_tests {
-    use std::ffi::OsStr;
     use std::fs;
     use std::io::Read;
 
@@ -100,7 +99,7 @@ mod data_file_tests {
 
     #[test]
     fn fail_on_non_utf8_text() {
-        let csv_path = PathBuf::from(OsStr::new("test_data/test_data_windows-1252.csv"));
+        let csv_path = PathBuf::from("test_data/test_data_windows-1252.csv");
         let result = load_csv_file(&csv_path);
         assert!(result.is_err());
 
@@ -118,7 +117,7 @@ mod data_file_tests {
     #[test]
     fn full_round_trip() {
         // prepare file paths
-        let csv_path = PathBuf::from(OsStr::new("test_data/round_trip_test_data.csv"));
+        let csv_path = PathBuf::from("test_data/round_trip_test_data.csv");
         let parquet_path = csv_path.with_extension("parquet");
         assert!(csv_path.is_file());
         fs::remove_file(&parquet_path).unwrap_or_default();
@@ -158,7 +157,7 @@ mod data_file_tests {
     #[test]
     fn convert_win_1252() {
         // convert file to new file, ensure result
-        let csv_path = PathBuf::from(OsStr::new("test_data/test_data_windows-1252.csv"));
+        let csv_path = PathBuf::from("test_data/test_data_windows-1252.csv");
         let new_csv_path = csv_path.with_extension("csv_utf8");
         let result = win_to_utf8(&csv_path, &new_csv_path);
         assert!(result.is_ok());
