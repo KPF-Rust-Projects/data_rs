@@ -14,7 +14,7 @@ polars = { version = "0.22.*", features = ["lazy", "fmt", "parquet"] }
 [profile.release-small]
 inherits = "release"
 strip = true
-opt-level = "z"
+opt-level = "s"
 lto = "thin"
 codegen-units = 1
 panic = "abort"

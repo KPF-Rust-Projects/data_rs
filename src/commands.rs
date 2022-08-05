@@ -55,6 +55,7 @@ mod command_tests {
     use std::fs;
 
     use polars::prelude::DataType;
+    use crate::lib;
 
     use super::*;
 
@@ -69,9 +70,10 @@ mod command_tests {
             error.to_string(),
             "could not scan CSV file \"this_path_does_not_exist\""
         );
+        let source_text = error.source().unwrap().to_string();
         assert_eq!(
-            error.source().unwrap().to_string(),
-            "The system cannot find the file specified. (os error 2)"
+            lib::slice_from_end(&source_text, 11).unwrap(),
+            "(os error 2)"
         )
     }
 
@@ -86,9 +88,10 @@ mod command_tests {
             error.to_string(),
             "could not open CSV file \"this_path_does_not_exist\""
         );
+        let source_text = error.source().unwrap().to_string();
         assert_eq!(
-            error.source().unwrap().to_string(),
-            "The system cannot find the file specified. (os error 2)"
+            lib::slice_from_end(&source_text, 11).unwrap(),
+            "(os error 2)"
         )
     }
 

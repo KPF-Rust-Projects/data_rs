@@ -6,6 +6,7 @@ use clap::{Parser, Subcommand};
 
 mod commands;
 mod data_file;
+mod lib;
 
 #[derive(Parser, Debug)]
 #[clap(author, version, about="Data file tool", long_about = None)]
