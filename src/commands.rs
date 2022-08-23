@@ -54,10 +54,14 @@ pub fn win_to_utf8(win_path: &PathBuf, utf8_path: &PathBuf) -> Result<()> {
 mod command_tests {
     use std::fs;
 
-    use polars::prelude::DataType;
     use crate::lib;
+    use polars::prelude::DataType;
 
     use super::*;
+
+    fn error_source_text(error: anyhow::Error) -> String {
+        error.source().unwrap().to_string()
+    }
 
     #[test]
     fn csv_schema_fails_on_non_existent_file() {
@@ -70,7 +74,7 @@ mod command_tests {
             error.to_string(),
             "could not scan CSV file \"this_path_does_not_exist\""
         );
-        let source_text = error.source().unwrap().to_string();
+        let source_text = error_source_text(error);
         assert_eq!(
             lib::slice_from_end(&source_text, 11).unwrap(),
             "(os error 2)"
@@ -88,7 +92,7 @@ mod command_tests {
             error.to_string(),
             "could not open CSV file \"this_path_does_not_exist\""
         );
-        let source_text = error.source().unwrap().to_string();
+        let source_text = error_source_text(error);
         assert_eq!(
             lib::slice_from_end(&source_text, 11).unwrap(),
             "(os error 2)"
